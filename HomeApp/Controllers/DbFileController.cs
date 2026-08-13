@@ -170,13 +170,20 @@ namespace HomeApp.Controllers
         [HttpGet("/videos/{id}")]
         public IActionResult GetVideo(int id)
         {
-            var path = $"/videos/{id}.mp4";
+            var fileDb = GetById(id);
 
-            if (!System.IO.File.Exists(path))
+            if (fileDb == null) return NotFound();
+            string? destinationOptimized = _configuration.GetValue<string>("Paths:FileUploadLocationOptimized");
+
+            if(!Directory.Exists(destinationOptimized)) return NotFound();
+
+            string fileDestination = Path.Combine(destinationOptimized, fileDb?.Stored_file_name??"");
+
+            if (!System.IO.File.Exists(fileDestination))
                 return NotFound();
 
             var stream = new FileStream(
-                path,
+                fileDestination,
                 FileMode.Open,
                 FileAccess.Read,
                 FileShare.Read);
