@@ -1,8 +1,10 @@
 ﻿using HomeApp.Common;
+using HomeApp.Helpers;
 using HomeApp.Interfaces;
 using HomeApp.SqlModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeApp.Controllers
 {
@@ -20,11 +22,14 @@ namespace HomeApp.Controllers
         [HttpPost]
         public Article? CreateOne([FromBody] Article entity)
         {
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
+            var owner = _context.Users.Include(e => e.Articles).SingleOrDefault(e => e.ID == principal.UserID);
             try
             {
                 entity.ID = null;
                 entity.Creation_date = DateTime.Now.ToUniversalTime();
                 entity.Last_updated = DateTime.Now.ToUniversalTime();
+                entity.User = owner;
                 var created = _context.Articles.Add(entity);
                 _context.SaveChanges();
                 return created.Entity;
@@ -42,7 +47,7 @@ namespace HomeApp.Controllers
         {
             try
             {
-                var existing = GetById(id);
+                var existing = GetById(id);//already searches
 
                 _context.Remove(existing);
                 _context.SaveChanges();
@@ -60,13 +65,16 @@ namespace HomeApp.Controllers
         [HttpGet]
         public List<Article>? GetAll()
         {
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
+            var owner = _context.Users.Include(e => e.Articles).SingleOrDefault(e => e.ID == principal.UserID);
+
+            if (owner == null) return new List<Article>();
             try
             {
-                return _context.Articles.ToList();
+                return owner.Articles;
             }
             catch (Exception)
             {
-
                 return null;
             }
         }
@@ -76,14 +84,16 @@ namespace HomeApp.Controllers
 
         public Article? GetById(int id)
         {
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
+            var owner = _context.Users.Include(e => e.Articles).SingleOrDefault(e => e.ID == principal.UserID);
             try
             {
-                return _context.Articles.SingleOrDefault(e => e.ID == id);
+                return owner?.Articles.SingleOrDefault(e => e.ID == id);
             }
             catch (Exception)
             {
 
-                throw;
+                return null;
             }
         }
         [Authorize]
@@ -92,9 +102,10 @@ namespace HomeApp.Controllers
 
         public Article? UpdateOne([FromBody] Article entity)
         {
+           
             try
             {
-                var existing = GetById((int)entity.ID);
+                var existing = GetById((int)entity.ID);//already searches on owner!
                 entity.Last_updated = DateTime.Now.ToUniversalTime();
 
                 _context.Articles.Entry(existing).CurrentValues.SetValues(entity);

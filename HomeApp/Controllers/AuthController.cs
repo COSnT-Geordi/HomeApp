@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using HomeApp.Helpers;
 namespace HomeApp.Controllers
 {
     [ApiController]
@@ -36,7 +36,7 @@ namespace HomeApp.Controllers
                 return Unauthorized();
 
 
-            return Ok(new { token = result});
+            return Ok(new { token = result });
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register(SignUpRequest request)
@@ -53,16 +53,10 @@ namespace HomeApp.Controllers
         public async Task<IActionResult> IsAuthenticated()
         {
 
-            var authHeader = Request.Headers.Authorization.ToString();
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
 
-           if (string.IsNullOrEmpty(authHeader))
-            {
-                return Unauthorized();
-            }
-
-            var token = authHeader.Replace("Bearer ", "");
-
-            Console.WriteLine(token);
+            if (principal.UserID == 0) return Unauthorized();
+            // Console.WriteLine(token);
 
             return Ok();
 

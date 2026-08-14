@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace HomeApp.SqlModels
 {
@@ -14,7 +15,6 @@ namespace HomeApp.SqlModels
 
         public string Title { get; set; } = "";
         [Column("description")]
-
         public string Description { get; set; } = "";
         [Column("creation_date")]
         public DateTime? Creation_date { get; set; } = DateTime.MinValue;
@@ -24,6 +24,7 @@ namespace HomeApp.SqlModels
         [Column("user_id")]
 
         public long? UserId { get; set; }
+        [JsonIgnore]
         public User? User { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HomeApp.Common;
+using HomeApp.Helpers;
 using HomeApp.Interfaces;
 using HomeApp.SqlModels;
 using Microsoft.AspNetCore.Authorization;
@@ -21,11 +22,15 @@ namespace HomeApp.Controllers
         [HttpPost]
         public Album? CreateOne([FromBody] Album entity)
         {
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
+            var owner = _context.Users.SingleOrDefault(e => e.ID == principal.UserID);
+
             try
             {
-                entity.ID =0;
+                entity.ID = 0;
                 entity.DbFiles.Clear();
                 entity.Creation_date = DateTime.Now.ToUniversalTime();
+                entity.User = owner;
                 var created = _context.Albums.Add(entity);
                 _context.SaveChanges();
                 return created.Entity;
@@ -61,9 +66,13 @@ namespace HomeApp.Controllers
         [HttpGet]
         public List<Album>? GetAll()
         {
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
+            var owner = _context.Users.Include(e => e.Albums).SingleOrDefault(e => e.ID == principal.UserID);
+
+            if (owner == null) return new List<Album>();
             try
             {
-                return _context.Albums.ToList();
+                return owner.Albums;
             }
             catch (Exception)
             {
@@ -77,10 +86,13 @@ namespace HomeApp.Controllers
 
         public Album? GetById(int id)
         {
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
+            var owner = _context.Users
+                .Include(e => e.Albums)
+                .ThenInclude(e=>e.DbFiles).SingleOrDefault(e => e.ID == principal.UserID);
             try
             {
-                return _context.Albums
-                    .Include(e=>e.DbFiles)
+                return owner.Albums
                     .SingleOrDefault(e => e.ID == id);
             }
             catch (Exception)
@@ -97,10 +109,10 @@ namespace HomeApp.Controllers
         {
             try
             {
-                var existing = GetById((int)entity.ID );
+                var existing = GetById((int)entity.ID);
 
                 _context.Albums.Entry(existing).CurrentValues.SetValues(entity);
-                foreach(var item in entity.DbFiles) 
+                foreach (var item in entity.DbFiles)
                 {
                     item.Albums = null;
                 }

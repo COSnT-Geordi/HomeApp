@@ -21,13 +21,15 @@ namespace HomeApp.SqlModels
         [Column("password")]
 
         public string? Password { get; set; } = "";
-       
+
         [Column("creation_date")]
 
         public DateTime Creation_date { get; set; }
 
 
-        public List<Article> Articles { get; set; }
+        public List<Article> Articles { get; set; } = [];
+
+        public List<Album> Albums { get; set; } = [];
 
     }
 }

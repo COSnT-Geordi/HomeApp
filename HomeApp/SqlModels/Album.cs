@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HomeApp.SqlModels
@@ -25,7 +26,12 @@ namespace HomeApp.SqlModels
         [Column("creation_date")]
 
         public DateTime Creation_date { get; set; }
+        [Column("user_id")]
+
+        public long? UserId { get; set; }
 
         public List<DbFile> DbFiles { get; set; } = new List<DbFile>();
+        [JsonIgnore]
+        public User? User { get; set; }
     }
 }
