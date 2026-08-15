@@ -10,7 +10,7 @@ namespace HomeApp.SqlModels
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
 
-        public int? ID { get; set; }
+        public long? ID { get; set; }
         [Column("title")]
 
         public string Title { get; set; } = "";
@@ -20,11 +20,11 @@ namespace HomeApp.SqlModels
         public DateTime? Creation_date { get; set; } = DateTime.MinValue;
         [Column("last_updated")]
         public DateTime? Last_updated { get; set; } = DateTime.MinValue;
-
         [Column("user_id")]
-
         public long? UserId { get; set; }
         [JsonIgnore]
         public User? User { get; set; }
+        [JsonIgnore]
+        public List<UserSharingArticle> UserSharingsArticle { get; set; } = new List<UserSharingArticle>();
     }
 }

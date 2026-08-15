@@ -28,8 +28,9 @@ namespace HomeApp.SqlModels
 
 
         public List<Article> Articles { get; set; } = [];
-
         public List<Album> Albums { get; set; } = [];
+        public List<DbFile> DbFiles { get; set; } = [];
+        public List<UserSharing> UserSharings { get; set; } = [];
 
     }
 }

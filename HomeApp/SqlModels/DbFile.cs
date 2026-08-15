@@ -37,6 +37,11 @@ namespace HomeApp.SqlModels
         [Column("upload_date")]
 
         public DateTime Upload_date { get; set; }
+        [Column("user_id")]
+        public long? UserId { get; set; }
+
+        [JsonIgnore]
+        public User? User { get; set; }
         [JsonIgnore]
         public List<Album> Albums { get; set; } = new List<Album>();
 
