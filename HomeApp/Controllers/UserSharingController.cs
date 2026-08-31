@@ -17,7 +17,7 @@ namespace HomeApp.Controllers
         {
             _context = context;
         }
-
+        [Authorize]
         [HttpPost]
         public UserSharing? CreateOne([FromBody] UserSharing entity)
         {
@@ -41,6 +41,7 @@ namespace HomeApp.Controllers
                 return null;
             }
         }
+        [Authorize]
 
         [HttpDelete("{id}")]
         public bool DeleteOne(int id)
@@ -60,6 +61,7 @@ namespace HomeApp.Controllers
             }
 
         }
+        [Authorize]
 
         [HttpGet]
         public List<UserSharing>? GetAll()
@@ -80,6 +82,7 @@ namespace HomeApp.Controllers
                 return null;
             }
         }
+        [Authorize]
 
         [HttpGet("{id}")]
 
@@ -114,6 +117,7 @@ namespace HomeApp.Controllers
         }
 
         [HttpPut]
+        [Authorize]
 
         public UserSharing? UpdateOne([FromBody] UserSharing entity)
         {
