@@ -22,6 +22,7 @@ namespace HomeApp.Common
 
             modelBuilder.Entity<Article>().ToTable("article").HasOne(e => e.User).WithMany(e => e.Articles).HasForeignKey(k => k.UserId);
             modelBuilder.Entity<Article>().HasMany(e => e.UserSharingsArticle).WithOne(e => e.Article).HasForeignKey(k => k.ArticleID);
+            modelBuilder.Entity<Article>().HasOne(e => e.ArticleCategory).WithMany(e => e.Articles).HasForeignKey(k => k.ArticleCategoryID);
 
             modelBuilder.Entity<NoteList>().ToTable("note_list").HasMany(e => e.Notes).WithOne(e => e.NoteList).HasForeignKey(k => k.NoteListId);
             modelBuilder.Entity<Note>().ToTable("note").HasOne(e => e.NoteList).WithMany(e => e.Notes).HasForeignKey(k => k.NoteListId);
@@ -93,6 +94,7 @@ namespace HomeApp.Common
         public DbSet<Album> Albums { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserSharing> UserSharings { get; set; }
+        public DbSet<ArticleCategory> ArticleCategories { get; set; }
 
 
     }

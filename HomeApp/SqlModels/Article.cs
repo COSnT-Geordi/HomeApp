@@ -22,8 +22,13 @@ namespace HomeApp.SqlModels
         public DateTime? Last_updated { get; set; } = DateTime.MinValue;
         [Column("user_id")]
         public long? UserId { get; set; }
+        [Column("article_categoryid")]
+        public long? ArticleCategoryID { get; set; }
+
+        public ArticleCategory? ArticleCategory { get; set; }
         [JsonIgnore]
         public User? User { get; set; }
+
         [JsonIgnore]
         public List<UserSharingArticle> UserSharingsArticle { get; set; } = new List<UserSharingArticle>();
     }

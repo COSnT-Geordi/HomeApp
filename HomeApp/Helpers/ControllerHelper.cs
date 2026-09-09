@@ -7,12 +7,13 @@ namespace HomeApp.Helpers
     public class ControllerHelper
     {
 
-        public static Principal GetTokenFromRequest(HttpRequest request)
+        public static Principal? GetTokenFromRequest(HttpRequest request)
         {
             var authHeader = request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
 
             var handler = new JwtSecurityTokenHandler();
+            if (string.IsNullOrEmpty(authHeader)) return null;
             var jwt = handler.ReadJwtToken(authHeader);
 
             var userId = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;

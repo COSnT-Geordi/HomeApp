@@ -56,7 +56,7 @@ namespace HomeApp.Controllers
         {
             return null;
         }
-
+        [HttpPut]
         public User? UpdateOne([FromBody] User entity)
         {
             return null;

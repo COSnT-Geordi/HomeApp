@@ -9,28 +9,24 @@ using Microsoft.EntityFrameworkCore;
 namespace HomeApp.Controllers
 {
     [ApiController]
-    [Route("/articles")]
-    public class ArticleController : Controller, ICrudController<Article>
+    [Route("/articlecategories")]
+    public class ArticleCategoryController : Controller, ICrudController<ArticleCategory>
     {
         private HomeDbContext _context;
-        public ArticleController(HomeDbContext context)
+        public ArticleCategoryController(HomeDbContext context)
         {
             _context = context;
         }
-        [Authorize]
 
         [HttpPost]
-        public Article? CreateOne([FromBody] Article entity)
+        public ArticleCategory? CreateOne([FromBody] ArticleCategory entity)
         {
             var principal = ControllerHelper.GetTokenFromRequest(Request);
-            var owner = _context.Users.Include(e => e.Articles).SingleOrDefault(e => e.ID == principal.UserID);
             try
             {
                 entity.ID = null;
-                entity.Creation_date = DateTime.Now.ToUniversalTime();
-                entity.Last_updated = DateTime.Now.ToUniversalTime();
-                entity.User = owner;
-                var created = _context.Articles.Add(entity);
+               
+                var created = _context.ArticleCategories.Add(entity);
                 _context.SaveChanges();
                 return created.Entity;
             }
@@ -40,7 +36,6 @@ namespace HomeApp.Controllers
                 return null;
             }
         }
-        [Authorize]
 
         [HttpDelete("{id}")]
         public bool DeleteOne(int id)
@@ -48,8 +43,8 @@ namespace HomeApp.Controllers
             try
             {
                 var existing = GetById(id);//already searches
-
-                _context.Remove(existing);
+                existing.Articles.Clear();
+                _context.ArticleCategories.Remove(existing);
                 _context.SaveChanges();
                 return true;
             }
@@ -60,35 +55,30 @@ namespace HomeApp.Controllers
             }
 
         }
-        [Authorize]
 
         [HttpGet]
-        public List<Article>? GetAll()
+        public List<ArticleCategory>? GetAll()
         {
             var principal = ControllerHelper.GetTokenFromRequest(Request);
-            var owner = _context.Users.Include(e => e.Articles).ThenInclude(e=>e.ArticleCategory).SingleOrDefault(e => e.ID == principal.UserID);
 
-            if (owner == null) return new List<Article>();
             try
             {
-                return owner.Articles;
+                return _context.ArticleCategories.ToList();
             }
             catch (Exception)
             {
                 return null;
             }
         }
-        [Authorize]
 
         [HttpGet("{id}")]
 
-        public Article? GetById(int id)
+        public ArticleCategory? GetById(int id)
         {
             var principal = ControllerHelper.GetTokenFromRequest(Request);
-            var owner = _context.Users.Include(e => e.Articles).ThenInclude(e => e.ArticleCategory).SingleOrDefault(e => e.ID == principal.UserID);
             try
             {
-                return owner?.Articles.SingleOrDefault(e => e.ID == id);
+                return _context.ArticleCategories.Include(e => e.Articles).SingleOrDefault(e => e.ID == id);
             }
             catch (Exception)
             {
@@ -100,15 +90,14 @@ namespace HomeApp.Controllers
 
         [HttpPut]
 
-        public Article? UpdateOne([FromBody] Article entity)
+        public ArticleCategory? UpdateOne([FromBody] ArticleCategory entity)
         {
            
             try
             {
                 var existing = GetById((int)entity.ID);//already searches on owner!
-                entity.Last_updated = DateTime.Now.ToUniversalTime();
 
-                _context.Articles.Entry(existing).CurrentValues.SetValues(entity);
+                _context.ArticleCategories.Entry(existing).CurrentValues.SetValues(entity);
                 _context.SaveChanges();
                 return existing;
             }
