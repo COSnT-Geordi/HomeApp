@@ -18,8 +18,9 @@ namespace HomeApp.Helpers
 
             var userId = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var userName = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var role = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             long.TryParse(userId, out long userIDParsed);
-            return new Principal() { UserID = userIDParsed, UserName = userName ?? "", Password = "" };
+            return new Principal() { UserID = userIDParsed, UserName = userName ?? "", Password = "", Role = role?.ToUpper()??"UNKOWN" };
 
         }
     }

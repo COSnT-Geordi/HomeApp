@@ -18,7 +18,6 @@ namespace HomeApp.Controllers
             _context = context;
         }
         [Authorize]
-
         [HttpPost]
         public Album? CreateOne([FromBody] Album entity)
         {
@@ -42,7 +41,6 @@ namespace HomeApp.Controllers
             }
         }
         [Authorize]
-
         [HttpDelete("{id}")]
         public bool DeleteOne(int id)
         {
@@ -50,7 +48,7 @@ namespace HomeApp.Controllers
             {
                 var existing = GetById(id);
 
-                _context.Remove(existing);
+                _context.Albums.Remove(existing);
                 _context.SaveChanges();
                 return true;
             }
@@ -62,7 +60,6 @@ namespace HomeApp.Controllers
 
         }
         [Authorize]
-
         [HttpGet]
         public List<Album>? GetAll()
         {
@@ -81,9 +78,7 @@ namespace HomeApp.Controllers
             }
         }
         [Authorize]
-
         [HttpGet("{id}")]
-
         public Album? GetById(int id)
         {
             var principal = ControllerHelper.GetTokenFromRequest(Request);
@@ -102,7 +97,6 @@ namespace HomeApp.Controllers
             }
         }
         [Authorize]
-
         [HttpPut]
 
         public Album? UpdateOne([FromBody] Album entity)

@@ -78,6 +78,7 @@ namespace HomeApp
             }
         };
     });
+            builder.Services.AddTransient<MailService>();
             builder.Services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -127,7 +128,7 @@ namespace HomeApp
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/v1/swagger.json", "v1");
-                options.RoutePrefix = string.Empty;
+                options.RoutePrefix = "swagger";
             });
             app.MapGet("/v1/swagger.json", async context =>
             {
@@ -138,6 +139,12 @@ namespace HomeApp
 
             app.UseAuthorization();
             app.MapControllers();
+            //  var scope = app.Services.CreateScope();
+
+            // var mailservice = scope.ServiceProvider.GetRequiredService<MailService>();
+            // mailservice?.Login();
+            app.MapFallbackToFile("index.html");
+
             app.Run();
         }
 

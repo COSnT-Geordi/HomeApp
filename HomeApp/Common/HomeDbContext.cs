@@ -85,6 +85,8 @@ namespace HomeApp.Common
                 .HasForeignKey(e => e.UserID);
             modelBuilder.Entity<UserSharingAlbum>().ToTable("user_sharing_album").HasOne(e => e.UserSharing).WithMany(e => e.UserSharingAlbums).HasForeignKey(e => e.UserSharingID);
             modelBuilder.Entity<UserSharingArticle>().ToTable("user_sharing_article").HasOne(e => e.UserSharing).WithMany(e => e.UserSharingArticles).HasForeignKey(e => e.UserSharingID);
+            
+            modelBuilder.Entity<Page>().ToTable("page");
 
         }
         public DbSet<Article> Articles { get; set; }
@@ -95,6 +97,7 @@ namespace HomeApp.Common
         public DbSet<User> Users { get; set; }
         public DbSet<UserSharing> UserSharings { get; set; }
         public DbSet<ArticleCategory> ArticleCategories { get; set; }
+        public DbSet<Page> Pages { get; set; }
 
 
     }

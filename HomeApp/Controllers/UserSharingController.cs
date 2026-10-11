@@ -41,8 +41,50 @@ namespace HomeApp.Controllers
                 return null;
             }
         }
-        [Authorize]
+        [HttpGet("shared")]
+        public List<UserSharing> GetSharedWithMe()
+        {
 
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
+            if (principal == null) return null;
+            try
+            {
+
+                return _context.UserSharings
+                     .Include(e => e.UserSharingUsers)// Includes the users shared to
+                     .Where(e => e.UserSharingUsers.Any(usu => usu.UserID == principal.UserID)) // Get only the users where the requested user id is in the user sharing user list
+                     .ToList();
+            }
+            catch (Exception)
+            {
+
+                return new List<UserSharing>();
+            }
+        }
+        [HttpGet("shared/{id}")]
+        public UserSharing GetShareWithMeDetailed(long id)
+        {
+
+            var principal = ControllerHelper.GetTokenFromRequest(Request);
+            if (principal == null) return null;
+            try
+            {
+
+                return _context.UserSharings
+                     .Include(e => e.UserSharingUsers)
+                     .Include(e => e.UserSharingAlbums).ThenInclude(e => e.Album)
+                     .Include(e => e.UserSharingArticles).ThenInclude(e => e.Article)
+                     .Include(e => e.UserSharingDbFiles).ThenInclude(e => e.DbFile)
+                     .Where(e => e.UserSharingUsers.Any(usu => usu.UserID == principal.UserID))
+                     .Single(e => e.ID == id);
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+        }
+        [Authorize]
         [HttpDelete("{id}")]
         public bool DeleteOne(int id)
         {
@@ -62,7 +104,6 @@ namespace HomeApp.Controllers
 
         }
         [Authorize]
-
         [HttpGet]
         public List<UserSharing>? GetAll()
         {
@@ -98,8 +139,6 @@ namespace HomeApp.Controllers
                 .ThenInclude(e => e.UserSharingDbFiles)
                 .Include(e => e.UserSharings)
                 .ThenInclude(e => e.UserSharingUsers)
-              
-               
                 .SingleOrDefault(e => e.ID == principal.UserID);
 
             if (owner == null) return null;
@@ -121,11 +160,18 @@ namespace HomeApp.Controllers
 
         public UserSharing? UpdateOne([FromBody] UserSharing entity)
         {
+            var Principal = ControllerHelper.GetTokenFromRequest(Request);
+            if (Principal == null) return null;
+
             try
             {
                 var existing = GetById((int)entity.ID);
-
                 _context.UserSharings.Entry(existing).CurrentValues.SetValues(entity);
+
+
+
+
+
                 ContextTool.UpdateRelations<UserSharingDbFile>(existing.UserSharingDbFiles, entity.UserSharingDbFiles);
                 ContextTool.UpdateRelations<UserSharingAlbum>(existing.UserSharingAlbums, entity.UserSharingAlbums);
                 ContextTool.UpdateRelations<UserSharingArticle>(existing.UserSharingArticles, entity.UserSharingArticles);

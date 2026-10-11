@@ -1,6 +1,7 @@
 ﻿using HomeApp.Common;
 using HomeApp.Helpers;
 using HomeApp.Interfaces;
+using HomeApp.Models;
 using HomeApp.SqlModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +18,16 @@ namespace HomeApp.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public ArticleCategory? CreateOne([FromBody] ArticleCategory entity)
         {
             var principal = ControllerHelper.GetTokenFromRequest(Request);
+            if (principal?.Role != "ADMIN") return null;
             try
             {
                 entity.ID = null;
-               
+
                 var created = _context.ArticleCategories.Add(entity);
                 _context.SaveChanges();
                 return created.Entity;
@@ -76,6 +78,8 @@ namespace HomeApp.Controllers
         public ArticleCategory? GetById(int id)
         {
             var principal = ControllerHelper.GetTokenFromRequest(Request);
+            if (principal?.Role != "ADMIN") return null;
+
             try
             {
                 return _context.ArticleCategories.Include(e => e.Articles).SingleOrDefault(e => e.ID == id);
@@ -86,13 +90,14 @@ namespace HomeApp.Controllers
                 return null;
             }
         }
-        [Authorize]
+        [Authorize(Roles ="ADMIN")]
 
         [HttpPut]
 
         public ArticleCategory? UpdateOne([FromBody] ArticleCategory entity)
         {
-           
+            
+   
             try
             {
                 var existing = GetById((int)entity.ID);//already searches on owner!

@@ -60,7 +60,8 @@ namespace HomeApp.Services
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-                new Claim(ClaimTypes.Email, user.Username)
+                new Claim(ClaimTypes.Email, user.Username??""),
+                new Claim(ClaimTypes.Role,user.Role??""), 
             };
 
             var key = new SymmetricSecurityKey(

@@ -49,7 +49,7 @@ namespace HomeApp.Controllers
             {
                 var existing = GetById(id);//already searches
 
-                _context.Remove(existing);
+                _context.Articles.Remove(existing);
                 _context.SaveChanges();
                 return true;
             }
@@ -85,7 +85,10 @@ namespace HomeApp.Controllers
         public Article? GetById(int id)
         {
             var principal = ControllerHelper.GetTokenFromRequest(Request);
-            var owner = _context.Users.Include(e => e.Articles).ThenInclude(e => e.ArticleCategory).SingleOrDefault(e => e.ID == principal.UserID);
+            var owner = _context.Users
+                .Include(e => e.Articles)
+                .ThenInclude(e => e.ArticleCategory)
+                .SingleOrDefault(e => e.ID == principal.UserID);
             try
             {
                 return owner?.Articles.SingleOrDefault(e => e.ID == id);
