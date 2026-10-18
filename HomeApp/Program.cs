@@ -26,7 +26,17 @@ namespace HomeApp
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            var certPath = Path.GetFullPath("./certs/api-certificate.pfx");
 
+            Console.WriteLine($"Certificaatpad: {certPath}");
+            Console.WriteLine($"Bestand bestaat: {File.Exists(certPath)}");
+
+            var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(
+                certPath,
+                "MijnSterkWachtwoord123!"
+            );
+
+            Console.WriteLine($"Certificaat geladen: {cert.Subject}");
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowReactApp", policy =>
@@ -40,10 +50,35 @@ namespace HomeApp
                         "http://192.168.1.139:5173",
                         "http://127.0.0.1:5064",
                         "http://192.168.1.139",
-                        "http://192.168.1.139:5064"
+                        "http://192.168.1.139:5064",
+                        "https://localhost:5173",
+                        "https://78.23.192.63:5064",
+                        "https://78.23.192.63",
+                        "https://amaidassimpel.be",
+                        "https://127.0.0.1:5173",
+                        "https://192.168.1.139:5173",
+                        "https://127.0.0.1:5064",
+                        "https://192.168.1.139",
+                        "https://192.168.1.139:5064"
                         ).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
             });
+            Console.WriteLine($"Subject: {cert.Subject}");
+            Console.WriteLine($"HasPrivateKey: {cert.HasPrivateKey}");
+            Console.WriteLine($"NotAfter: {cert.NotAfter}");
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(443, listenOptions =>
+                {
+                    listenOptions.UseHttps(cert);
+                });
+                options.ListenAnyIP(5063, listenOptions =>
+                {
+                   
+                });
+            });
+
+
             builder.Services.AddDbContext<HomeDbContext>((options) =>
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));

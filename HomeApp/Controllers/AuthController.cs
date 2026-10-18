@@ -41,6 +41,7 @@ namespace HomeApp.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(SignUpRequest request)
         {
+            
             var result = _loginService.SignUp(request);
 
             if (result == null)

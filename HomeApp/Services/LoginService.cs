@@ -27,7 +27,7 @@ namespace HomeApp.Services
         /// <returns>string exists,success,failed</returns>
         public string SignUp(SignUpRequest signUpRequest) 
         {
-            var user = _context?.Users?.ToList()?.SingleOrDefault(u => u.Username == signUpRequest.UserName);
+            var user = _context?.Users?.ToList()?.SingleOrDefault(u => u?.Username?.ToLower() == signUpRequest.UserName.ToLower());
             if (user != null) return "exists";
             try
             {
@@ -35,7 +35,7 @@ namespace HomeApp.Services
                 {
                     ID = 0,
                     Username = signUpRequest.UserName,
-                    
+                    Role= "USER",
                     Creation_date = DateTime.Now.ToUniversalTime(),
                     Password = Hash(signUpRequest.Password.Trim()),
                 });
@@ -55,6 +55,7 @@ namespace HomeApp.Services
            var user =  _context?.Users?.ToList()?.SingleOrDefault(u => u.Username == request.Email && u?.Password?.Trim() == passwordHashed);
 
             if(user == null) return string.Empty;
+            if(!user.IsReviewed) return string.Empty;
 
             string? pass = _configuration["Auth:HashPass"];
             var claims = new[]

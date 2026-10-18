@@ -28,6 +28,9 @@ namespace HomeApp.SqlModels
         [Column("creation_date")]
 
         public DateTime Creation_date { get; set; }
+        [Column("is_reviewed")]
+
+        public bool IsReviewed { get; set; }
 
 
         public List<Article> Articles { get; set; } = [];
