@@ -75,7 +75,7 @@ namespace HomeApp.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(6),
+                expires: DateTime.UtcNow.AddHours(24),
                 signingCredentials: credentials
             );
 
