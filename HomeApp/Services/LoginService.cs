@@ -36,6 +36,7 @@ namespace HomeApp.Services
                     ID = 0,
                     Username = signUpRequest.UserName,
                     Role= "USER",
+                    IsReviewed = false,
                     Creation_date = DateTime.Now.ToUniversalTime(),
                     Password = Hash(signUpRequest.Password.Trim()),
                 });
@@ -52,7 +53,7 @@ namespace HomeApp.Services
         public string Login(LoginRequest request)
         {
             var passwordHashed = Hash(request.Password.Trim());
-           var user =  _context?.Users?.ToList()?.SingleOrDefault(u => u.Username == request.Email && u?.Password?.Trim() == passwordHashed);
+           var user =  _context?.Users?.ToList()?.SingleOrDefault(u => u?.Username?.ToLower() == request.Email.ToLower() && u?.Password?.Trim() == passwordHashed);
 
             if(user == null) return string.Empty;
             if(!user.IsReviewed) return string.Empty;

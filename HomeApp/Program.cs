@@ -46,6 +46,7 @@ namespace HomeApp
                         "http://78.23.192.63:5064",
                         "http://78.23.192.63",
                         "http://amaidassimpel.be",
+                        "http://amaidassimpel.be:5064",
                         "http://127.0.0.1:5173",
                         "http://192.168.1.139:5173",
                         "http://127.0.0.1:5064",
@@ -72,7 +73,7 @@ namespace HomeApp
                 {
                     listenOptions.UseHttps(cert);
                 });
-                options.ListenAnyIP(5063, listenOptions =>
+                options.ListenAnyIP(80, listenOptions =>
                 {
                    
                 });
